@@ -9,6 +9,12 @@ namespace Generic.Core.Repositories
     {
         IClientRepository Clients { get; }
 
+        IMenuRepository MenuRepository { get; }
+        IRoleRepository RoleRepository { get; }
+        IUserRepository UserRepository { get; }
+        IAuthenticationRepository AuthenticationRepository { get; }
+        IRoleMenuRepository RoleMenuRepository { get; }
+
         Task<int> CommitAsync();
     }
 }
