@@ -19,15 +19,6 @@ namespace Generic.Core.Models
         public virtual ICollection<UserRole> UserRoles { get; set; }
          [NotMapped]        
          public virtual ICollection<String> RoleNames { get; set; }
-
-        [NotMapped]
-        public String token { get; set; }
-
-        [NotMapped]
-        public virtual ICollection<Role> Roles { get; set; }
-        [NotMapped]
-        public virtual ICollection<Role> UnAssignedRoles { get; set; }
-
-        //public virtual ICollection<RoleMenu> RoleMenu { get; set; }
+        public string Sexo { get; set; }
     }
 }

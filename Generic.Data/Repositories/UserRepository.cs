@@ -34,38 +34,6 @@ namespace Generic.Data.Repositories
                 LastName = user.LastName
                 ,SecurityStamp = user.SecurityStamp
                 ,PasswordHash = user.PasswordHash
-                ,Roles = (from userRole in user.UserRoles
-                         join role in _context.Roles
-                         on userRole.RoleId
-                         equals role.Id
-                         where role.Status == 1
-                         select new Role 
-                                    { 
-                                     Id = role.Id
-                                     , Name = role.Name
-                                     , Menus = (from roleMenu in role.RoleMenus
-                                                join menu in _context.Menu
-                                                on roleMenu.MenuId
-                                                equals menu.Id
-                                                where menu.Status == 1
-                                                select new Menu
-                                                {
-                                                    Id = menu.Id
-                                                    ,Path = menu.Path
-                                                    ,Title = menu.Title
-                                                    ,Icon = menu.Icon
-                                                    ,ParentId = menu.ParentId
-                                                    ,Status = menu.Status
-                                                }).ToList()
-                         }).ToList()
-                ,UnAssignedRoles = (from roles in _context.Roles
-                                    where !user.UserRoles.Any(ur => ur.RoleId == roles.Id)
-                                    && roles.Status == 1
-                                    select new Role
-                                    {
-                                        Id = roles.Id
-                                        ,Name = roles.Name
-                                    }).ToList()
             })
             .FirstOrDefaultAsync(user => user.Id == id); 
             
@@ -135,47 +103,6 @@ namespace Generic.Data.Repositories
                 ,LastName = user.LastName
                 ,SecurityStamp = user.SecurityStamp
                 ,PasswordHash = user.PasswordHash
-                ,Roles = (from userRole in user.UserRoles
-                         join role in _context.Roles
-                         on userRole.RoleId
-                         equals role.Id
-                         where role.Status == 1
-                         select new Role
-                         {
-                             Id = role.Id
-                                     ,
-                             Name = role.Name
-                                     ,
-                             Menus = (from roleMenu in role.RoleMenus
-                                      join menu in _context.Menu
-                                      on roleMenu.MenuId
-                                      equals menu.Id
-                                      where menu.Status == 1
-                                      select new Menu
-                                      {
-                                          Id = menu.Id
-                                          ,
-                                          Path = menu.Path
-                                          ,
-                                          Title = menu.Title
-                                          ,
-                                          Icon = menu.Icon
-                                          ,
-                                          ParentId = menu.ParentId
-                                          ,
-                                          Status = menu.Status
-                                      }).ToList()
-                         }).ToList()
-                ,
-                UnAssignedRoles = (from roles in _context.Roles
-                                   where !user.UserRoles.Any(ur => ur.RoleId == roles.Id)
-                                   && roles.Status == 1
-                                   select new Role
-                                   {
-                                       Id = roles.Id
-                                       ,
-                                       Name = roles.Name
-                                   }).ToList()
             })
             .FirstOrDefaultAsync(user => user.UserName == userName);
 

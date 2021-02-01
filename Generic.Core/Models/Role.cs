@@ -9,11 +9,5 @@ namespace Generic.Core.Models
     {
         public int Status { get; set; } = 1;
         public virtual ICollection<UserRole> UserRoles { get; set; }
-        public virtual ICollection<RoleMenu> RoleMenus { get; set; }
-        [NotMapped]
-        public virtual ICollection<Menu> Menus { get; set; }
-        [NotMapped]
-        public virtual ICollection<Menu> UnAssignedMenus { get; set; }
-
     }
 }

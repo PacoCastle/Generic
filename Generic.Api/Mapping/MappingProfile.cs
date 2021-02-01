@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Generic.Api.DTOS;
+using Generic.Api.Dtos;
 using Generic.Core.Models;
 
 namespace MyMusic.Api.Mapping
@@ -9,10 +9,10 @@ namespace MyMusic.Api.Mapping
         public MappingProfile()
         {
             // Domain to Resource
-            CreateMap<Client, ClientReturn>();
+            CreateMap<User, UserForReturnDto>();
             
             // Resource to Domain
-            CreateMap<ClientCreate, Client>();
+            CreateMap<UserForCreateDto, User>();
         }
     }
 }

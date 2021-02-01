@@ -7,7 +7,6 @@ using Generic.Services;
 using Generic.Core.Repositories;
 using Generic.Core.Services;
 using Generic.Data;
-using Generic.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +22,8 @@ using Generic.Core.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using FluentValidation.AspNetCore;
+using System.Reflection;
 
 namespace Generic.Api
 {
@@ -69,13 +70,13 @@ namespace Generic.Api
             services.AddControllers();
             services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IClientService, ClientService>();
+            services.AddMvc().AddFluentValidation(fv =>
+            {
+                fv.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+                fv.ImplicitlyValidateChildProperties = true;
 
-            services.AddScoped<IMenuService, MenuService>();
-            services.AddScoped<IRoleService, RoleService>();
+            });
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
-
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
@@ -84,26 +85,7 @@ namespace Generic.Api
                     Title = "My API",
                     Version = "v1"
                 });
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    In = ParameterLocation.Header,
-                    Description = "Please insert JWT with Bearer into field",
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                        },
-                        new string[] { }
-                    }
-                });
+                
             });
 
             services.AddAutoMapper(typeof(Startup));
