@@ -18,7 +18,8 @@ namespace Generic.Data
         private readonly SignInManager<User> _signInManager;
 
         private UserRepository _userRepository;
-        
+        private AuthenticationRepository _authenticationRepository;
+
         public UnitOfWork(DataContext context, RoleManager<Role> roleManager, UserManager<User> userManager, SignInManager<User> signInManager)
         {
             this._context = context;
@@ -28,6 +29,7 @@ namespace Generic.Data
         }
 
         public IUserRepository UserRepository => _userRepository = _userRepository ?? new UserRepository(_userManager, _context);
+        public IAuthenticationRepository AuthenticationRepository => _authenticationRepository = _authenticationRepository ?? new AuthenticationRepository(_signInManager, _context);
         public async Task<int> CommitAsync()
         {
             return await _context.SaveChangesAsync();

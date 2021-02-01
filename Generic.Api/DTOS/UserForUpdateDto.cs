@@ -9,5 +9,6 @@ namespace Generic.Api.Dtos
         public string Password { get; set; }
         public string Email { get; set; }
         public int Status { get; set;  }
+        public string Sexo { get; set; }
     }
 }

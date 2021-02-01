@@ -13,6 +13,9 @@ namespace MyMusic.Api.Mapping
             
             // Resource to Domain
             CreateMap<UserForCreateDto, User>();
+
+            // Resource to Domain
+            CreateMap<UserForUpdateDto, User>();
         }
     }
 }

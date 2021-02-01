@@ -22,12 +22,13 @@ namespace DatingApp.Api.Validations
             RuleFor(m => m.Email)
                 .EmailAddress()
                 .WithMessage("'Email'  Es requerido un Email valido.");
-            RuleFor(m => m.Password)
+
+            When(m => m.Password.Length > 0, () => {
+                RuleFor(m => m.Password)
                 .Matches(regEx)
-                  .WithMessage("Password should contain at least 1 special character, 1 upper letter, 1 lower letter and 1 number");
-            RuleFor(m => m.Password)
-                .NotEmpty()
-                .WithMessage("'Password'  no puede ser vacío.");
+                .WithMessage("Password should contain at least 1 special character, 1 upper letter, 1 lower letter and 1 number");
+            });
+
             RuleFor(m => m.Name)
                 .NotEmpty()
                 .WithMessage("'Name'  no puede ser vacío.");

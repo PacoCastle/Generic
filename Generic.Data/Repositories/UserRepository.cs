@@ -34,6 +34,8 @@ namespace Generic.Data.Repositories
                 LastName = user.LastName
                 ,SecurityStamp = user.SecurityStamp
                 ,PasswordHash = user.PasswordHash
+                ,Sexo = user.Sexo
+                ,Status = user.Status
             })
             .FirstOrDefaultAsync(user => user.Id == id); 
             
@@ -51,6 +53,8 @@ namespace Generic.Data.Repositories
                 Name = user.Name,
                 LastName = user.LastName
                 ,SecurityStamp = user.SecurityStamp
+                ,Sexo = user.Sexo
+                ,Status = user.Status
             }).ToListAsync();
 
             return users; 
@@ -103,6 +107,8 @@ namespace Generic.Data.Repositories
                 ,LastName = user.LastName
                 ,SecurityStamp = user.SecurityStamp
                 ,PasswordHash = user.PasswordHash
+                ,Sexo = user.Sexo
+                ,Status = user.Status
             })
             .FirstOrDefaultAsync(user => user.UserName == userName);
 
