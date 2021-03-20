@@ -2,9 +2,10 @@ using System;
 
 namespace Generic.Api.Dtos
 {
-    public class UserForCreateDto
+    public class UserForReturnDto
     {        
-        public string UserName { get; set; }
+        public int Id { get; set; }
+        public string Username { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
@@ -12,10 +13,6 @@ namespace Generic.Api.Dtos
         public string SecondLastName { get; set; }        
         public DateTime DateOfBirth { get; set; }        
         public DateTime Created { get; set; }
-        public UserForCreateDto()
-        {
-            Created = DateTime.Now;
-        }
         public string[] RoleNames { get; set; }
     }
 }

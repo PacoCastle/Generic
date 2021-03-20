@@ -20,8 +20,8 @@ Contains all EndPoints for Get, Post and Put Users Entity
 /// 
 namespace Generic.Api.Controllers
 {
-    [AllowAnonymous]
-    //[Authorize]
+    //[AllowAnonymous]
+    [Authorize]
     [Route("api/[controller]")]
      [ApiController]
      public class UsersController : ControllerBase

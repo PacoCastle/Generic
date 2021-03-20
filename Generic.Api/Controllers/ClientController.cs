@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Generic.Api.DTOS;
+using Generic.Api.Dtos;
 using Generic.Api.Validations;
 using Generic.Core.Models;
 using Generic.Core.Services;

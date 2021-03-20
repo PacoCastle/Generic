@@ -7,7 +7,6 @@ using Generic.Services;
 using Generic.Core.Repositories;
 using Generic.Core.Services;
 using Generic.Data;
-using Generic.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +22,8 @@ using Generic.Core.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace Generic.Api
 {
@@ -39,16 +40,9 @@ namespace Generic.Api
         public void ConfigureServices(IServiceCollection services)
         {
 
-            IdentityBuilder builder = services.AddIdentityCore<User>(opt =>
-            {
-                opt.Password.RequireDigit = false;
-                opt.Password.RequiredLength = 4;
-                opt.Password.RequireNonAlphanumeric = false;
-                opt.Password.RequireUppercase = false;
-            });
+            IdentityBuilder builder = services.AddIdentityCore<User>();
 
             builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
-            //builder.AddEntityFrameworkStores<DataContext>();
             builder.AddEntityFrameworkStores<DataContext>();
             builder.AddDefaultTokenProviders();
             builder.AddRoleManager<RoleManager<Role>>();
@@ -63,16 +57,24 @@ namespace Generic.Api
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
                             .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
                         ValidateIssuer = false,
-                        ValidateAudience = false
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero
                     };
                 });
-            services.AddControllers();
+
+            services.AddControllers(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                options.Filters.Add(new AuthorizeFilter(policy));
+            });
             services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IClientService, ClientService>();
 
-            services.AddScoped<IMenuService, MenuService>();
-            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
 
@@ -121,7 +123,14 @@ namespace Generic.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            // app.UseSignalR(routes => {
+            //     routes.MapHub<SignalHub>("/signalHub");
+            // });
+
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseEndpoints(endpoints =>
             {

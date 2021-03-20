@@ -111,14 +111,12 @@ namespace Generic.Services
             try
             {
                 //Send parameters to a validate if exist
-                await validRoles(UserToBeCreatedModel.RoleNames, err);
+                //await validRoles(UserToBeCreatedModel.rol, err);
+                string[] RoleNames  = new string[] { };
+                RoleNames.Append("Admin");
 
-                //If some or Roles sending doesn't exist, then return 
-                if (err.Count > 0)
-                {
-                    result.errors = err;
-                    return result;
-                }
+                UserToBeCreatedModel.RoleNames = RoleNames;
+
                 //Call Method in the repository for create User 
                 await _unitOfWork.UserRepository.CreateUser(UserToBeCreatedModel, password);
                 
@@ -161,40 +159,12 @@ namespace Generic.Services
 
             try
             {
-                //Extract to a variable the roles to be Updated
-                var rolesForAdd = UserForUpdateModel.RoleNames;
-
-                //Send parameters to a validate if exist
-                await validRoles(rolesForAdd, err);
-
-                //If some or Roles sending doesn't exist, then return 
-                if (err.Count > 0)
-                {
-                    result.errors = err;
-                    return result;
-                }
-
-                //Extract to a variable the actual roles that the user have
-                var rolesForExclude = UserToBeUpdateModel.UserRoles
-                                                .Select(r => r.Role.Name)
-                                                .ToList();
-
-                //If exist diference between original roles and to be Updated then
-                var originalAddDiff = rolesForExclude.All(rolesForAdd.Contains);
-
-                if (!originalAddDiff)
-                {
-                    //Add all roles that are in the Update Object
-                    await _unitOfWork.UserRepository.AddUserRoles(UserToBeUpdateModel, rolesForAdd, rolesForExclude);
-                    //Drop all roles that the User instance had
-                    await _unitOfWork.UserRepository.RemoveUserRoles(UserToBeUpdateModel, rolesForExclude, rolesForAdd);
-                }
-
                 //Set in the object TO BE UPDATED (ORIGIN) the changues from object FOR UPDATE                
                 UserToBeUpdateModel.Name = UserForUpdateModel.Name;
                 UserToBeUpdateModel.LastName = UserForUpdateModel.LastName;
                 UserToBeUpdateModel.SecondLastName = UserForUpdateModel.SecondLastName;
                 UserToBeUpdateModel.Status = UserForUpdateModel.Status;
+                UserToBeUpdateModel.Email = UserForUpdateModel.Email;
 
                 //If the password is not null or Empety then generate Reset
                 if (!String.IsNullOrEmpty(NewPassword)) 
@@ -262,74 +232,6 @@ namespace Generic.Services
             }
 
             return result;
-        }
-        /// <summary>
-        /// Function thah Update a register for User  
-        /// </summary>
-        /// <param name="UserToBeUpdateModel">Instance of User for be Updated</param>
-        /// <param name="UserForUpdateModel">Instance of User with the Data to Update</param>
-        /// <returns></returns>
-        //public async Task<BaseResponse<User>> GetUserUnAssignedRoles(User UserFromRepo)
-        //{
-        //    //Declare variables for result and errors for be filled with the response of _unitOfWork
-        //    BaseResponse<User> result = new BaseResponse<User>();
-        //    List<string> err = new List<string>();
-        //    List<DetailResponse> detailResponse = new List<DetailResponse>();
-
-        //    try
-        //    {
-        //        //Extract to a variable the roles to be Updated
-        //        var rolesAssigned = UserFromRepo.Roles
-        //                                            .Select(r => r.Name)
-        //                                            .ToList();
-
-
-
-        //        //Set Successful in true because the commit was completed     
-        //        result.Successful = true;
-
-        //        //Set in Data Response of result object   
-        //        var userFromRepo = await this.GetUserById(UserToBeUpdateModel.Id);
-
-        //        //
-        //        result.DataResponse = userFromRepo.DataResponse;
-
-        //        //Set in Details local variable  object a message for successful execution in the Update
-        //        detailResponse.Add(result.AddDetailResponse(UserToBeUpdateModel.Id, "Actualización realizada correctamente"));
-
-        //        //Set Details from local variable to result before return
-        //        result.Details = detailResponse;
-
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        //If exist a Error un the transaction then set Error Detail for return in the result
-        //        err.Add("Error en UserService -> UpdateUser " + ex.Message);
-        //        result.errors = err;
-        //    }
-
-        //    //return result FROM SERVICE object
-        //    return result;
-
-        //} 
-        private async Task validRoles(ICollection<string> rolesForValidate, List<string> err)
-        {
-            var allRoles = await _unitOfWork.RoleRepository.GetAllAsync();
-
-            var allRoleNames = allRoles.Where(r => r.Status == 1)
-                                .Select(r => r.Name)
-                                .ToList();
-
-            var roleDiferences = rolesForValidate.Where(x => !allRoleNames.Contains(x)).ToList();
-
-            //If some or Roles sending doesn't exist, then return 
-            if (roleDiferences.Count > 0)
-            {
-                foreach (string currentRole in roleDiferences)
-                {
-                    err.Add("El Role " + currentRole + " no existe el catálogo o no se encuentra activo");
-                }
-            }
         }
     }
 }
